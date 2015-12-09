@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<!--[if lte IE 9]><meta http-equiv="refresh" content="0;url=/ie.html"><![endif]-->
+
+<title>ContextLoaderListener用途</title>
+<meta name="author" content="ChenHsinHsuan">
+
+<meta name="keywords" content="undefined">
+
+<meta name="description " content="null">
+
+<link rel="icon" href="/favicon.png">
+
+<link rel="stylesheet" href="/css/style.css" type="text/css">
+  </head>
+  <body>
+    <aside id="sidebar">
+  <nav id="tags">
+    <a href="http://airconchen.github.io" id="avatar" style="background-image:url(/favicon.png)"></a>
+    <ul id="tags__ul">
+      <li id="pl__all" class="tags__li tags-btn active">所有文章</li>
+      
+      <li id="開發心得" class="tags__li tags-btn">開發心得</li>
+      
+    </ul>
+    <div id="tags__bottom">
+      <a href="http://github.com/airconchen" rel="nofollow" id="icon-github" target="_blank" class="tags-btn fontello"></a>
+    </div>
+  </nav> <!-- end #tags -->
+  <div id="posts-list">
+    <nav id="pl__container">
+      
+            
+                <a class="開發心得 pl__all" href="/2015/12/02/Apache-Maven/" title="Apache Maven">
+                  
+                  <span class="pl__circle"></span><span class="pl__title">Apache Maven</span><span class="pl__date">2015-12-02</span>
+                </a>
+            
+                <a class="開發心得 pl__all" href="/2015/11/16/日誌Log/" title="日誌Log">
+                  
+                  <span class="pl__circle"></span><span class="pl__title">日誌Log</span><span class="pl__date">2015-11-16</span>
+                </a>
+            
+                <a class="開發心得 pl__all" href="/2015/11/10/springMVC/" title="SpringMVC">
+                  
+                  <span class="pl__circle"></span><span class="pl__title">SpringMVC</span><span class="pl__date">2015-11-10</span>
+                </a>
+            
+                <a class="開發心得 pl__all" href="/2015/11/10/spring/" title="Spring Framework">
+                  
+                  <span class="pl__circle"></span><span class="pl__title">Spring Framework</span><span class="pl__date">2015-11-10</span>
+                </a>
+            
+                <a class="開發心得 pl__all" href="/2015/11/17/SpringRESTful/" title="SpringRESTful">
+                  
+                  <span class="pl__circle"></span><span class="pl__title">SpringRESTful</span><span class="pl__date">2015-11-17</span>
+                </a>
+            
+                <a class="開發心得 pl__all" href="/2015/11/23/ContextLoaderListener用途/" title="ContextLoaderListener用途">
+                  
+                  <span class="pl__circle"></span><span class="pl__title">ContextLoaderListene...</span><span class="pl__date">2015-11-23</span>
+                </a>
+            
+      
+    </nav>
+  </div> <!-- end #posts-list -->
+</aside> <!-- end #sidebar -->
+
+    <div id="post">
+      <div id="pjax">
+        <article id="post__content">
+  <h1 id="post__title" data-identifier="2015-11-23">ContextLoaderListener用途</h1>
+  <small><span id="busuanzi_container_site_pv">您是第<span id="busuanzi_value_site_pv"></span>位路人</span></small>
+  
+  <h1 id="概述">概述</h1><p>在使用Spring時，於WebApplicationContext的 Configursation metadata中會設定到</p>
+<p>但ContextLoaderListener的用途一直沒有弄的很明白，</p>
+<p>透過這次的深入了解一探究竟</p>
+<a id="more"></a>
+<h1 id="關於_ContextLoaderListener">關於 ContextLoaderListener</h1><p>是Spring MVC在Web Container中的啟動Class，負責Spring IoC Container 在Web context中的的初始化。</p>
+<p>Spring MVC啟動過程：</p>
+<ol>
+<li><p>ContextLoaderListener初始化，initial IoC容器，並將其註冊到ServletContext中</p>
+</li>
+<li><p>DispatcherServlet初始化。</p>
+</li>
+</ol>
+<p>所以根據以上的說明，可以了解ContextLoaderListener 可以幫助我們在Web Layer使用 BO Layer的 IoC  Container</p>
+<pre><code><span class="comment">&lt;!-- Creates the Spring Container shared by all Servlets and Filters --&gt;</span>
+<span class="tag">&lt;<span class="title">listener</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">listener-class</span>&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="tag">&lt;/<span class="title">listener-class</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">listener</span>&gt;</span>
+</code></pre><p>預設會去讀取  WEB-INF/applicationContext.xml</p>
+<p>若想要修改讀取的檔案名稱或位置就像下面這樣寫即可</p>
+<pre><code><span class="tag">&lt;<span class="title">context-param</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="title">param-name</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">param-value</span>&gt;</span>classpath*:META-INF/spring/applicationContext*.xml<span class="tag">&lt;/<span class="title">param-value</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">context-param</span>&gt;</span>
+
+<span class="comment">&lt;!-- Creates the Spring Container shared by all Servlets and Filters --&gt;</span>
+<span class="tag">&lt;<span class="title">listener</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">listener-class</span>&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="tag">&lt;/<span class="title">listener-class</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">listener</span>&gt;</span>
+</code></pre><h1 id="切記不要跟_Spring_MVC_的_DispatcherServlet_的_xml_搞混">切記不要跟 Spring MVC 的 DispatcherServlet 的 xml 搞混</h1><p> 他們都是去加載spring的配置文件，那麼他們有什麼不同呢？</p>
+<p> 後來在網上查了下資料，發現他們的作用域是不同的，</p>
+<p> DispatcherServlet中加載的配置文件的作用域是在<strong>Web請求的時候才觸發的</strong>，一般跟controller相關的bean配置會放在這裏面，例如ViewResolver的bean</p>
+<p> ContextLoaderListener加載的配置文件的作用域是在<strong>整個環境中</strong>，類似於application級別的，一般在這個配置文件中定義的是public的內容，例如BO layer的db、service等等</p>
+
+</article>
+<div id="post__share">
+    <a id="icon-heart" class="fontello" href="#"></a>
+</div>
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+        <div id="disqus_thread"></div>
+        <script>
+        /**
+        * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+        */
+        /*
+        var disqus_config = function () {
+        this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        */
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//fpgblog.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+        <p id="copyright">AirconChen</p>
+      </div>
+      <div id="post__toc-trigger">
+        <div id="post__toc">
+          <span id="post__toc-title">目錄</span>
+          <ul id="post__toc-ul"></ul>
+        </div>
+      </div>
+    </div>
+    <button id="js-fullscreen"><span id="icon-arrow" class="fontello"></span></button>
+<script src="/js/js-lib.js" type="text/javascript"></script>
+
+  </body>
+</html>
